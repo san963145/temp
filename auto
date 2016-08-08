@@ -1,0 +1,99 @@
+<html>
+<head>
+
+<script src="jquery-1.12.4.min.js"></script>
+
+<style>
+.bdsug {
+    width: 122px;
+    display: none;
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ccc;
+}
+.bdsug li {
+    width: 122px;
+    line-height: 22px;
+    color: #000;
+    font: 14px arial;
+    padding: 0 3px;
+    position: relative;
+    cursor: default;
+	list-style-type:none;
+}
+ol, ul, li, dl, dt, dd, h3 {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+li {
+    display: list-item;
+    text-align: -webkit-match-parent;
+}
+</style>
+
+
+<script>
+var x;
+var result=[];
+
+function init()
+{
+	if(window.XMLHttpRequest)
+    {
+	    x=new XMLHttpRequest();
+	}
+	else
+    {
+		x=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+	
+}
+function send(value)
+{
+document.getElementById("inblock").style.display='block';
+	
+	
+   result.length=0;
+   x.open("GET","getResult?value="+value,true);
+   x.onreadystatechange=update;
+   x.send(); 
+}
+function update()
+{
+   if(x.readyState==4 && x.status==200)
+  {
+    var list=new Array();
+	list=x.responseText.split("#");
+	for(i=0;i<list.length;i++)
+	{
+		result.push(list[i]);
+	}
+	
+	alert(result);
+  }  
+}
+function change(text)
+{
+   document.getElementById("stockContent").value=text;
+   document.getElementById("inblock").style.display='none';
+}
+</script>
+</head>
+<body onload="init()">
+<div>
+<input type="text" id="stockContent" oninput="send(this.value)">
+
+<div class="bdsug" id="inblock" style="height: auto; display: none;">
+<ul id="ulContent">
+<li onclick="change(this.innerText)">4</li>
+<li>5</li>
+<li>6</li>
+<li>7</li>
+</ul>
+</div>
+
+</div>
+</body>
+
+</html>
