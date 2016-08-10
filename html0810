@@ -1,0 +1,562 @@
+
+<!DOCTYPE html>
+<html>
+
+
+  <head>
+
+    <meta charset="UTF-8">
+    <title>Stock Analysis System</title>
+	
+    <meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	
+  
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+	
+    <link rel="stylesheet" href="dist/css/my.css">
+    <!-- Bootstrap 3.3.4 æ¡æ¶-->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+	
+	<link rel="stylesheet" href="bootstrap/css/bootstrap-datetimepicker.min.css">
+	
+	<link rel="stylesheet" href="bootstrap/css/daterangepicker-bs3.css">
+    <!-- FontAwesome 4.3.0 å¾æ -->
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <!-- Theme style ç½ç«æé -->
+    <link rel="stylesheet" href="dist/css/AdminLTE.min.css"> 
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+    
+    <link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap.css">
+    
+    <link rel="stylesheet" href="plugins/select2/select2.min.css">
+
+
+    <link rel="stylesheet" href="pages/css/input.css">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+	  
+	  .red{
+	     background-color:rgb(221,75,57);
+	  }
+	  .green{
+	     background-color:rgb(0,166,90);
+	  }
+	</style>
+    <script charset="UTF-8">  
+
+	function check()
+	{
+		var stock=document.getElementById("stock").value;
+		var dateStart=document.getElementById("dateStart").value;
+		var dateEnd=document.getElementById("dateEnd").value;
+		if(stock=="")
+	    {
+			alert("Please input the stock!");
+			return false;
+	    }
+		else if(dateStart=="")
+		{
+			alert("Please select the start date!");
+			return false;
+		}
+		else if(dateEnd=="")
+		{
+			alert("Please select the end date!");
+			return false;
+		}
+		else if(dateEnd<dateStart)
+		{
+			alert("End date can't be earlier than start date!");
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}		
+  </script>
+  </head>
+  <body class="skin-red-light sidebar-mini" onload="init()">
+    <div class="wrapper">
+
+      <header class=" main-header" id="my-menu">
+        <!-- Logo -->
+		<a class="logo" href="#systems" data-toggle="collapse" data-parent="#my-menu">
+			<b>Stock Analysis System&nbsp;&nbsp;<img src="img/arrow.gif" height="10" width="10" /></b>
+		</a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top" role="navigation">
+          <!-- Sidebar toggle button-->
+          <a href="#" class="sidebar-toggle visible-xs" data-toggle="offcanvas" role="button">
+            <span class="sr-only">user</span>
+          </a>
+          <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+			  
+              <!-- User info -->
+              <li>
+			    <a href="#" data-toggle="tooltip" data-placement="bottom" title="user information">user</a>
+			  </li>
+			  <li>
+			    <a href="logout" data-toggle="tooltip" data-placement="bottom" title="logout"><i class="fa fa-mail-forward"></i></a>
+			  </li>
+        
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <!-- Left side column. contains the logo and sidebar -->
+      <aside class="main-sidebar">
+        <div id="systems" class="collapse in">
+			<div class="box-div bg-red">
+			  <a href="pages/main.jsp">
+				<!-- small box -->
+				  <div class="small-box bg-red">
+					<div class="box-div">
+					  <h3>Analyse</h3>
+					  <p class="font">Daily Data</p>
+					</div>
+					<div class="icon">
+					  <i class="glyphicon glyphicon-signal"></i>
+					</div>
+					<a href="pages/main.jsp" class="small-box-footer">Exit&nbsp;<i class="fa fa-arrow-circle-left"></i></a>
+				  </div>
+			  </a>
+			</div>											
+		</div>
+		
+		
+      </aside>
+
+      <!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>
+					<small class="font">Analysis</small>
+				</h1>
+				<ol class="breadcrumb">
+					<li><a href="index.jsp"><i class="fa fa-dashboard"></i>
+							MainPage</a></li>
+					<li class="active">DailyData</li>
+				</ol>
+			</section>
+
+			<!-- Main content -->
+			<section class="content">
+				<!-- Main row -->
+				<div class="row">
+
+					<!-- SELECT2 EXAMPLE -->
+					<div class="box box-default">
+						<div class="box-header with-border">
+							<h3 class="box-title">Daily Data Statistics</h3>
+							<div class="box-tools pull-right">
+								<button class="btn btn-box-tool" data-widget="collapse">
+									<i class="fa fa-minus"></i>
+								</button>
+							</div>
+						</div>
+						<!-- /.box-header -->
+						<div class="box-body">
+						
+							<div class="pull-left">
+							<table id="result" class="text-center table table-bordered">
+						<thead>
+						  <tr>
+						    <th>Stock</th>
+							<th>Buy Date</th>
+							<th>Price</th>
+							<th>Today</th>
+							<th>Price</th>
+							<th>Volume</th>
+					        <th>Profit</th>
+						  </tr>
+						</thead>
+						<tbody>
+				
+						  <tr class="red">
+						    <td>a</td>
+						    <td>2016-02-03</td>
+						    <td>26.2</td>
+						    <td>2016-03-24</td>
+						    <td>27.5</td>
+						    <td>1900</td>
+                            <td>1330</td>							
+						  </tr>
+						   <tr class="green">
+						    <td>b</td>
+						    <td>2016-02-05</td>
+						    <td>36.2</td>
+						    <td>2016-03-24</td>
+						    <td>35.5</td>
+							<td>210</td>
+						    <td>-1470</td>								
+						  </tr>
+						   <tr class="red">
+						    <td>c</td>
+						    <td>2016-02-09</td>
+						    <td>26.2</td>
+						    <td>2016-03-24</td>
+						    <td>27.8</td>
+							<td>1000</td>
+						    <td>600</td>							
+						  </tr>
+						   <tr class="green">
+						    <td>d</td>
+						    <td>2016-02-09</td>
+						    <td>28.2</td>
+						    <td>2016-03-24</td>
+						    <td>27.3</td>
+						    <td>1500</td>	
+                            <td>-1350</td>							
+						  </tr>
+						   <tr class="green">
+						    <td>e</td>
+						    <td>2016-02-09</td>
+						    <td>29.2</td>
+						    <td>2016-03-24</td>
+						    <td>28.6</td>
+						    <td>1500</td>	
+                            <td>-900</td>							
+						  </tr>
+             
+               
+						
+						    
+
+						</tbody>
+                  </table>
+						</div>
+						
+						<div class="pull-right">
+                             <div id="main" style="width: 450px;height:306px;"></div>
+						</div>
+						
+						
+						</div>
+						<!-- /.box-body -->
+					</div>
+					<!-- /.box -->
+					
+                     <div class="box box-default">
+						<div class="box-header with-border">
+							<h3 class="box-title">Exchange</h3>
+							<div class="box-tools pull-right">
+								<button class="btn btn-box-tool" data-widget="collapse">
+									<i class="fa fa-minus"></i>
+								</button>
+							</div>
+						</div>
+						<!-- /.box-header -->
+						<div class="box-body">																								
+						   
+						   <form action=day/search method="post"
+								onsubmit="return check()">
+								<div class="row">
+								
+								    <div class="col-md-2">
+										<div class="form-group">
+											<label>Balance</label> 																				                                       
+                                                    <input class="form-control" name="stock" value="83000" style="width: 100%;" id="stockContent" readonly>
+				                                    		                                
+										</div>
+										<!-- /.form-group -->
+									</div>
+									
+									<div class="col-md-3">
+										<div class="form-group">
+											<label>Symbol</label> 																				                                       
+                                                    <input class="form-control" name="stock" style="width: 100%;" id="stockContent" oninput="send(this.value)">
+				                                    		                                
+											<div class="bdsug" id="inblock"
+												style="height: auto; display: none;">
+												<ul id="ulContent">
+													
+												</ul>
+											</div>
+
+										</div>
+										<!-- /.form-group -->
+									</div>
+									<!-- /.col -->
+									
+									
+									<div class="col-md-2">
+										<div class="form-group">
+											<label>Volume</label> 																				                                       
+                                                    <input class="form-control" name="stock" style="width: 100%;" id="stockContent">
+				                                    		                                
+										</div>
+										<!-- /.form-group -->
+									</div>
+									
+
+									<div class="col-md-2 ">
+										<label>&nbsp;</label>
+										<button type="submit"
+											class="btn btn-danger btn-block btn-flat">Add</button>
+									</div>
+									
+									<div class="col-md-2 ">
+										<label>&nbsp;</label>
+										<button type="submit"
+											class="btn btn-danger btn-block btn-flat">Sell</button>
+									</div>
+									<!-- /.col -->
+								</div>
+								<!-- /.row -->
+							</form>
+						
+						</div>
+						<!-- /.box-body -->
+					</div>
+					
+					<div class="box box-default">
+						<div class="box-header with-border">
+							<h3 class="box-title">Prediction</h3>
+							<div class="box-tools pull-right">
+								<button class="btn btn-box-tool" data-widget="collapse">
+									<i class="fa fa-minus"></i>
+								</button>
+							</div>
+						</div>
+						<!-- /.box-header -->
+						<div class="box-body">																								
+						   
+						   <form action=day/search method="post"
+								onsubmit="return false">
+								<div class="row">
+								
+								    <div class="col-md-2">
+										<div class="form-group">
+											<label>Symbol</label> 																				                                       
+                                                    <input class="form-control" name="symbol2" value="" style="width: 100%;" id="symbol2">
+				                                    		                                
+										</div>
+										<!-- /.form-group -->
+									</div>
+									
+									<div class="col-md-3">
+										<div class="form-group">
+											<label>Date</label>
+											<div style="height: 100%;" class="input-append date"
+												id="datetimepicker3">
+												
+				                                    <input class="form-control" id="date" name="date"
+													type="text" value="" placeholder="yyyy-mm-dd hh:mm">
+		                                    
+		                                        	
+													<span class="add-on"><i
+													class="icon-th"></i></span>
+											</div>
+										</div>
+									</div>
+									<!-- /.col -->
+									
+									
+									<div class="col-md-2">
+										<div class="form-group">
+											<label>Prediction Result</label> 																				                                       
+                                                    <input class="form-control" name="result2" value="0" style="width: 100%;" id="result2"  readonly>
+				                                    		                                
+										</div>
+										<!-- /.form-group -->
+									</div>
+									
+									<div class="col-md-2">
+										<div class="form-group">
+											<label>Accuracy Rate</label> 																				                                       
+                                                    <input class="form-control" name="rate2" value="0" style="width: 100%;" id="rate2"  readonly>
+				                                    		                                
+										</div>
+										<!-- /.form-group -->
+									</div>
+									
+
+									<div class="col-md-2 ">
+										<label>&nbsp;</label>
+										<button type="submit"
+											class="btn btn-danger btn-block btn-flat">Calculate</button>
+									</div>
+									
+									
+									<!-- /.col -->
+								</div>
+								<!-- /.row -->
+							</form>
+						
+						</div>
+						<!-- /.box-body -->
+					</div>
+					
+					
+                
+		          
+		          
+	</div><!-- /.row (main row) -->
+        </section><!-- /.content -->
+      </div><!-- /.content-wrapper -->
+      <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+          <b>Version</b> 1.0
+        </div>
+		<p class="text-center">
+        <strong>Stock Analysis System</strong>
+		</p>
+      </footer>
+    </div><!-- ./wrapper -->
+
+    <!-- jQuery 2.1.4 -->
+    <script src="plugins/jQuery/jQuery-2.1.4.min.js"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="plugins/jQueryUI/jquery-ui.min.js"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+      $.widget.bridge('uibutton', $.ui.button);
+    </script>
+    <!-- Bootstrap 3.3.4 -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+	
+	<script src="bootstrap/js/bootstrap-datetimepicker.min.js"></script>
+	
+	<script src="bootstrap/js/moment.js"></script>
+ <!-- Select2 -->
+    <script src="plugins/select2/select2.full.min.js"></script>
+ 
+    <script src="plugins/fastclick/fastclick.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="dist/js/app.min.js"></script>
+    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+
+    <!-- AdminLTE for demo purposes -->
+    <script src="dist/js/demo.js"></script>
+    
+    <script src="pages/js/input.js"></script>
+	
+	<!-- DataTables -->
+    <script src="plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="plugins/datatables/dataTables.bootstrap.min.js"></script>
+    
+    <script src="echarts-all-3.js"></script>
+    
+	<script type="text/javascript">   
+
+$('#datetimepicker3').datetimepicker({
+format: 'yyyy-mm-dd hh:ii',
+minuteStep: 1,
+autoclose: true
+});
+
+    </script>
+    <script>
+     $(function () {
+        //Initialize Select2 Elements
+
+		$("#result").DataTable({
+			"aLengthMenu": [[5, 10, 20, 50, 100, -1], [5, 10, 20, 50, 100, "All"]],
+			"bStateSave": true,
+		    "oLanguage": {
+			"sLengthMenu": "_MENU_ records  per  page",
+			"sZeroRecords": "No Matching Result",
+			"sInfo": "The listed items are _START_th to _END_th , total  _TOTAL_",
+			"sInfoEmpty": "No data",
+			"sInfoFiltered": "(search from_MAX_items)",
+		
+			"oPaginate": {
+			"sFirst": "<<",
+			"sPrevious": "<",
+			"sNext": ">",
+			"sLast": ">>"
+			}
+			}
+		} );
+      });
+    </script>
+	
+   <script type="text/javascript">
+        var myChart = echarts.init(document.getElementById('main'));
+
+var data = [    {value:335, name:'a'},
+                {value:310, name:'b'},
+                {value:274, name:'c'},
+                {value:235, name:'d'},
+                {value:400, name:'e'},
+            ];
+			
+var option = {
+    backgroundColor: '#2c343c',
+
+    title: {
+        text: 'Profolio Pie',
+        left: 'center',
+        top: 20,
+        textStyle: {
+            color: '#ccc'
+        }
+    },
+
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+
+    visualMap: {
+        show: false,
+        min: 80,
+        max: 600,
+        inRange: {
+            colorLightness: [0, 1]
+        }
+    },
+    series : [
+        {
+            name:'stock value',
+            type:'pie',
+            radius : '50%',
+            center: ['50%', '50%'],
+            data: data.sort(function (a, b) { return a.value - b.value}),
+            //data: data,
+			roseType: 'angle',
+            label: {
+                normal: {
+                    textStyle: {
+                        color: 'rgba(255, 255, 255, 0.3)'
+                    }
+                }
+            },
+            labelLine: {
+                normal: {
+                    lineStyle: {
+                        color: 'rgba(255, 255, 255, 0.3)'
+                    },
+                    smooth: 0.2,
+                    length: 10,
+                    length2: 20
+                }
+            },
+            itemStyle: {
+                normal: {
+                    color: '#c23531',
+                    shadowBlur: 200,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    ]
+};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+    
+  </body>
+</html>
