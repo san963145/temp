@@ -1,0 +1,35 @@
+var x;
+function init()
+{
+	if(window.XMLHttpRequest)
+    {
+	    x=new XMLHttpRequest();
+	}
+	else
+    {
+		x=new ActiveXObject("Microsoft.XMLHTTP");
+    }	
+}
+function cal()
+{
+    var symbol=document.getElementById("symbol2");
+	var date=document.getElementById("date");
+    x.open("GET","search?symbol="+symbol+"&date="+date,true);
+    x.onreadystatechange=update;
+    x.send();
+}
+function update()
+{
+	if(x.readyState==4 && x.status==200)
+	{
+	   if(x.responseText=='error')
+	   {
+	      alert("Data is not on the date");
+		  return;
+	   }
+	   var list=new Array();
+	   list=x.responseText.split("#");
+	   document.getElementById("result2").value=list.get(0);
+	   document.getElementById("rate2").value=list.get(1);
+	}
+}
