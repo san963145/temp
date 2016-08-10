@@ -1,0 +1,9 @@
+                String symbol=request.getParameter("symbol");
+		String datetime=request.getParameter("date");
+		String[] s=datetime.split("\\s+");
+		String date=s[0].replaceAll("-", "");
+		String time=s[1].replaceAll(":","");
+		if(time.startsWith("0"));
+		time=time.substring(1);
+		int t=Integer.parseInt(time);
+		PrintWriter writer=response.getWriter();
