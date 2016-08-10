@@ -1,0 +1,5 @@
+        var reg="^[0-9]*$";
+	var r=randNum.match(reg);
+        if(r==null)
+
+        if(parseInt(randNum)==0)
