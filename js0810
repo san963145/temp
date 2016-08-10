@@ -12,8 +12,18 @@ function init()
 }
 function cal()
 {
-    var symbol=document.getElementById("symbol2");
+   var symbol=document.getElementById("symbol2");
 	var date=document.getElementById("date");
+	if(symbol=="")
+	{
+	   alert("Please input the symbol value!");
+	   return;
+	}
+	if(date=="")
+	{
+	   alert("Please input the date value!");
+	   return;
+	}
     x.open("GET","search?symbol="+symbol+"&date="+date,true);
     x.onreadystatechange=update;
     x.send();
